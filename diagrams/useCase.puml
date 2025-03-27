@@ -1,0 +1,28 @@
+@startuml
+left to right direction
+actor Пользователь as User
+
+rectangle CLI {
+  usecase "cat [FILE]" as UC1
+  usecase "echo [ARGS]" as UC2
+  usecase "wc [FILE]" as UC3
+  usecase "pwd" as UC4
+  usecase "exit" as UC5
+  usecase "Переменные ($)" as UC7
+  usecase "Пайплайны (|)" as UC8
+  usecase "Внешние процессы" as UC9
+  usecase "Обработка кавычек" as UC6
+}
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC7
+User --> UC8
+User --> UC9
+
+UC8 .> UC1 : расширение
+UC8 .> UC2 : расширение
+@enduml
