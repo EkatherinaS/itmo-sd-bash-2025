@@ -9,7 +9,6 @@ skinparam component {
   InterfaceFontColor #000
 }
 
-' 1. Основной поток (скелет с занятий)
 component "Lexer" as Lexer {
   () "raw_input" as lex_in
   () "tokens" as lex_out
@@ -31,7 +30,6 @@ component "Executor" as Executor {
   () "result" as exec_out
 }
 
-' 2. Все команды (явный список)
 component "Commands" as Commands {
   interface "Command" as cmd_iface
   [cat]
@@ -41,7 +39,6 @@ component "Commands" as Commands {
   [exit]
 }
 
-' 3. Системные зависимости
 component "System" as System {
   interface "FileSystem" as fs_iface
   interface "Process" as proc_iface
@@ -49,29 +46,24 @@ component "System" as System {
   [Process Manager]
 }
 
-' 4. Внешние точки
 () "User Input" as user_input
 () "Console Output" as console_output
 
-' 5. Связи (поток данных)
 user_input --> lex_in
 lex_out --> parse_in
 parse_out --> ast_in
 ast_out --> exec_in
 exec_out --> console_output
 
-' 6. Интерфейсы и реализации
 exec_iface -- cmd_iface
 fs_iface -- [File System]
 proc_iface -- [Process Manager]
 
-' 7. Команды и их зависимости
 [cat] --> fs_iface
 [wc] --> fs_iface
 [pwd] --> fs_iface
 [exit] --> proc_iface
 
-' 8. Пояснения (для соответствия скелету)
 note right of AST
   <b>AST-input</b>:
   Дерево разбора команд
