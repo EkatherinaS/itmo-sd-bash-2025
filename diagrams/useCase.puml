@@ -1,28 +1,78 @@
-@startuml
-left to right direction
-actor Пользователь as User
+@startuml BASH_UseCase_Diagram
 
-rectangle CLI {
-  usecase "cat [FILE]" as UC1
-  usecase "echo [ARGS]" as UC2
-  usecase "wc [FILE]" as UC3
-  usecase "pwd" as UC4
-  usecase "exit" as UC5
-  usecase "Переменные ($)" as UC7
-  usecase "Пайплайны (|)" as UC8
-  usecase "Внешние процессы" as UC9
-  usecase "Обработка кавычек" as UC6
+left to right direction
+actor Пользователь
+
+rectangle BASH {
+  usecase "Выбрать источник\nввода" as UC1
+  usecase "Работать с командой cat" as UC2 #DFEFFE
+  usecase "Работать с\nкомандой echo" as UC3 #DFEFFE
+  usecase "Ввести строку" as UC4
+  usecase "Работать с переменными" as UC5
+  usecase "Работать с\nкомандой wc" as UC6 #DFEFFE
+  usecase "Выбрать источник\nданных" as UC7
+  usecase "Работать с пайпами" as UC8
+  usecase "Работать с\nкомандой pwd" as UC9 #DFEFFE
+  usecase "Вызвать команду\nexit" as UC10 #DFEFFE
+  usecase "Добавить код\nзавершения" as UC11
+  usecase "Посмотреть список\nвсех переменных\n(команда set)" as UC12
+  usecase "Добавить определение переменной" as UC13
+  usecase "Использовать переменную" as UC14
+  usecase "Сделать переменную глобальной" as UC15
+  usecase "Уничтожить определение переменной" as UC16
+  usecase "Добавить имя файла(-ов)" as UC17
+  usecase "Вызвать команду без\nимени файла - ввод в\nстандартном потоке" as UC18
+  usecase "Добавить имя файла(-ов)" as UC19
+  usecase "Вызвать команду без\nимени файла - ввод в\nстандартном потоке" as UC20
+  usecase "Перенаправить\nвывод в пайп" as UC21
+  usecase "Принять ввод из пайпа" as UC22
+  usecase "Выбрать формат отображения путей" as UC23
+
+  Пользователь -- UC2
+  Пользователь -- UC3
+  Пользователь -- UC6
+  Пользователь -- UC9
+  Пользователь -- UC10
+  Пользователь -- UC5
+  Пользователь -- UC8
+
+
+UC8 -[hidden]-> UC21
+UC8 -[hidden]-> UC22
+UC2 -[hidden]-> UC1
+UC3 -[hidden]-> UC4
+UC5 -[hidden]-> UC12
+UC5 -[hidden]-> UC13
+UC5 -[hidden]-> UC14
+UC5 -[hidden]-> UC15
+UC5 -[hidden]-> UC16
+UC6 -[hidden]-> UC7
+
+UC10 -[hidden]-> UC11
+UC9 -[hidden]-> UC23
+UC1 -[hidden]-> UC17
+UC1 -[hidden]-> UC18
+UC7 -[hidden]-> UC19
+UC7 -[hidden]-> UC20
+
+
+  UC2 .> UC1 : <<include>>
+  UC3 .> UC4 : <<include>>
+  UC6 .> UC7 : <<include>>
+  UC10 <.. UC11 : <<extend>>
+  UC5 .> UC13 : <<include>>
+  UC5 .> UC12 : <<include>>
+  UC5 .> UC14 : <<include>>
+  UC5 .> UC15 : <<include>>
+  UC5 .> UC16 : <<include>>
+  UC8 .right.> UC21 : <<include>>
+  UC8 .> UC22 : <<include>>
+  UC9 <.. UC23 : <<extend>>
+'
+  UC17 --|> UC1
+  UC18 --|> UC1
+  UC19 --|> UC7
+  UC20 --|> UC7
 }
 
-User -- UC1
-User -- UC2
-User -- UC3
-User -- UC4
-User -- UC5
-User -- UC7
-User -- UC8
-User -- UC9
-
-UC8 .> UC1 : расширение
-UC8 .> UC2 : расширение
 @enduml
