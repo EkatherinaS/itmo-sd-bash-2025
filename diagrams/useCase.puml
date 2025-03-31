@@ -14,14 +14,14 @@ rectangle CLI {
   usecase "Обработка кавычек" as UC6
 }
 
-User --> UC1
-User --> UC2
-User --> UC3
-User --> UC4
-User --> UC5
-User --> UC7
-User --> UC8
-User --> UC9
+User -- UC1
+User -- UC2
+User -- UC3
+User -- UC4
+User -- UC5
+User -- UC7
+User -- UC8
+User -- UC9
 
 UC8 .> UC1 : расширение
 UC8 .> UC2 : расширение
