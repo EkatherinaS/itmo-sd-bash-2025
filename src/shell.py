@@ -1,10 +1,11 @@
 from prompt_toolkit import prompt
 from prompt_toolkit.key_binding import KeyBindings
 
+from config import *
+
 from interpreter.lexer import Lexer
 from interpreter.parser import Parser
-from config import *
-from src.interpreter.interpreter import Interpreter
+from interpreter.interpreter import Interpreter
 
 kb = KeyBindings()
 
