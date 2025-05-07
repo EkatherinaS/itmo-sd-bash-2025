@@ -4,6 +4,7 @@ from prompt_toolkit.key_binding import KeyBindings
 from interpreter.lexer import Lexer
 from interpreter.parser import Parser
 from config import *
+from src.interpreter.interpreter import Interpreter
 
 kb = KeyBindings()
 
@@ -15,6 +16,7 @@ def _(event):
 def main():
     lexer = Lexer(cmds)
     parser = Parser()
+    interpreter = Interpreter()
 
     while True:
         try:
@@ -23,13 +25,14 @@ def main():
                 break
 
             tokens = lexer.run(user_input)
-            for res in tokens:
-                print(res.group + ": " + res.value )
+            #for res in tokens:
+            #    print(res.group + ": " + res.value )
 
-            #TODO: parse lexer result
             ast = parser.run(tokens)
+            print(ast)
 
             #TODO: interpret AST
+            #interpretator.run(ast)
 
         except KeyboardInterrupt:
             break

@@ -1,0 +1,25 @@
+{
+  "CMD": "cmd1",
+  "FLAGS" : [
+    "-f1",
+    "-f2"
+  ],
+  "OPTIONS" : [
+    "--o1",
+    "--o2"
+  ],
+  "ARGS": [
+    "arg1",
+    "arg2"
+  ],
+  "STDIN": {
+    "CMD": "cmd2",
+    "FLAGS": [
+      "-f1",
+      "-f2"
+    ],
+    "ARGS": [
+      "arg1"
+    ]
+  }
+}

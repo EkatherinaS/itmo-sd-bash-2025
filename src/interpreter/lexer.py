@@ -6,10 +6,12 @@ class Lexer:
     def __init__(self, cmds):
         self.token_patterns = [
             ('PIPE', r'\|'),          # Шаблон для |
-            ('ARGUMENT', r'".*?"'),   # Шаблон для строк
-            ('REDIRECT', r'[><]'),    # Шаблон для перенаправлений
+            ('ARGUMENT', r'".+?"'),   # Шаблон для строк
+            ('FLAGS', r'-[^- ]+'),   # Шаблон для флагов
+            ('OPTIONS', r'--[^- ]+'),   # Шаблон для опций
             ('WHITESPACE', r'\s+')    # Игнорируем пробелы
         ]
+
         self.token_patterns.append(('CMD', '|'.join(cmds)))
         self.token_re = re.compile('|'.join(f'(?P<{name}>{pattern})' for name, pattern in self.token_patterns))
 
