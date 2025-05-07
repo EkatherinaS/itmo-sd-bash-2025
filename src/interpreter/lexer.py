@@ -1,6 +1,6 @@
 import re
 
-from interpreter.bash_token import Token
+from .bash_token import Token
 
 class Lexer:
     def __init__(self, cmds):
