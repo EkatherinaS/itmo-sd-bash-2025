@@ -11,6 +11,8 @@ class Interpreter:
             return self.var_decl_interpret(ast)
         else:
             self.root = self.create_expression(ast)
+            if self.root.cmd is None:
+                return f"Command not found\n"
             return self.root.interpret()
 
     def var_decl_interpret(self, data):
