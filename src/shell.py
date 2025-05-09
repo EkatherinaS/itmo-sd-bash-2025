@@ -1,5 +1,6 @@
 from prompt_toolkit import prompt
 from prompt_toolkit.key_binding import KeyBindings
+from colorama import Fore
 
 from config import *
 
@@ -26,20 +27,19 @@ def main():
                 break
 
             tokens = lexer.run(user_input)
-            #for res in tokens:
-            #    print(res.group + ": " + res.value )
-
             ast = parser.run(tokens)
-            print(ast)
+            result = interpreter.run(ast)
 
-            #TODO: interpret AST
-            #interpretator.run(ast)
+            if result is None:
+                print(user_input)
+            else:
+                print(result, end="")
 
         except KeyboardInterrupt:
             break
 
         except SyntaxError as e:
-            print(e)
+            print(Fore.RED + e.msg)
 
 
 if __name__ == "__main__":

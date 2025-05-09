@@ -40,6 +40,8 @@ class Parser:
 
         while self.position < len(self.tokens):
             token = self.tokens[self.position]
+            if token.group == 'VAR_DECL':
+                result["VAR_DECL"] = token.value
             if token.group == "PIPE":
                 break
             if token.group == "CMD":
