@@ -21,13 +21,10 @@ class Echo(Cmd):
         self.E = '-E' in self.flags
 
     def run(self):
+        result = ""
         if self.args:
-            output = " ".join(self.args)
-            if not self.n:
-                output += "\n"
-            return output
-
+            joiner = " " if self.n else "\n"
+            result = joiner.join(self.args)
         if self.stdin:
-            return self.stdin + ("" if self.n else "\n")
-        
-        return "\n"
+            result = self.stdin
+        return result + ("" if self.n else "\n")
