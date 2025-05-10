@@ -3,11 +3,8 @@ from commands.cmd import Cmd
 
 class Cat(Cmd):
     def run(self):
-        if not self.args and not self.stdin:
+        if not self.args:
             return ""
-
-        if not self.args and self.stdin:
-            return self.stdin
 
         content = []
         for file in self.args:
