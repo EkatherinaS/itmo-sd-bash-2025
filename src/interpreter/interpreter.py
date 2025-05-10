@@ -1,6 +1,6 @@
 from interpreter.expression import Expression
 from variables import Variables
-
+import json
 
 class Interpreter:
     def __init__(self):
@@ -12,7 +12,11 @@ class Interpreter:
         else:
             self.root = self.create_expression(ast)
             if self.root.cmd is None:
-                return f"Command not found\n"
+                return f"Command not found: {json.dumps(ast, indent=2)}\n"
+            #debug prints
+            print("_______AST________")
+            print(f"{json.dumps(ast, indent=2)}")
+            print("_______Command result________")
             return self.root.interpret()
 
     def var_decl_interpret(self, data):
