@@ -27,4 +27,4 @@ class Echo(Cmd):
             result = joiner.join(self.args)
         if self.stdin:
             result = self.stdin
-        return result + ("" if self.n else "\n")
+        return result + ("" if self.n and result != "" else "\n")
