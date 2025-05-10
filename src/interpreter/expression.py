@@ -10,9 +10,6 @@ class Expression:
         self.stdin = stdin
 
     def interpret(self):
-        if self.cmd is None:
-            return None
-
         stdin_res = None
         if not self.stdin is None:
             stdin_res = self.stdin.interpret()

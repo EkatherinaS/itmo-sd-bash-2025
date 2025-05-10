@@ -54,7 +54,7 @@ class Parser:
             elif token.group == "OPTIONS":
                 result["OPTIONS"].append(token.value)
             elif token.group == "ARGUMENT":
-                result["ARGS"].append(token.value.strip('"'))
+                result["ARGS"].append(token.value)
             self.position += 1
 
         if not result["FLAGS"]:

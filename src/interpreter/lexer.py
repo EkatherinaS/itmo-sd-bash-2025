@@ -11,6 +11,8 @@ class Lexer:
             ('FLAGS', r'-[^- \'"=]+'),      # Шаблон для флагов
             ('OPTIONS', r'--[^- \'"=]+'),   # Шаблон для опций
             ('WHITESPACE', r'\s+'),         # Игнорируем пробелы
+            ('SINGLE', r'\'([^- \'"=]|(\")|(\\)|(\"))+\''),    # Одинарные кавычки - возвращаем строку как есть
+            ('DOUBLE', r'\"([^- \'"=]|(\")|(\\)|(\"))+\"'),    # Двойные кавычки - подстановка $VAR, подстановка $(cmd), экранирование для \", \$, \\
             ('VAR_DECL', r'\b[a-zA-Z_][a-zA-Z0-9_]*=(?:\'[^\']*\'|"[^"]*"|[^\s;"\']+)'),  # Объявление var=value
         ]
         self.token_patterns.append(('CMD', '|'.join(cmds)))
@@ -30,8 +32,17 @@ class Lexer:
             value = match.group(name)
 
             if name != 'WHITESPACE':
-                value = Variables().replace(value)
-                tokens.append(Token(name, value))
+                tokens.append(self.get_token(name, value))
 
             pos = match.end()
         return tokens
+
+    def get_token(self, name, value):
+        if name != 'SINGLE':
+            value = Variables().replace(value)
+        if name == 'DOUBLE' or name == 'SINGLE':
+            value = value[1:-1]
+            if name == 'DOUBLE':
+                value = value.replace('\\\\', '\\').replace('\\"', '"').replace('\\$', '$')
+            name = 'ARGUMENT'
+        return Token(name, value)
