@@ -12,10 +12,10 @@ class Grep(Cmd):
         self.word_regexp = '-w' in flags
         self.after_context = 0
 
-        for flag in flags:
-            if flag.startswith('-A'):
+        for opt in options:
+            if opt.startswith('-A'):
                 try:
-                    self.after_context = int(flag[2:])
+                    self.after_context = int(opt[2:])
                 except ValueError:
                     pass
 
