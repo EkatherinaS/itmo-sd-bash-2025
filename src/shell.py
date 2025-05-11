@@ -1,3 +1,5 @@
+import re
+
 from prompt_toolkit import prompt
 from prompt_toolkit.key_binding import KeyBindings
 from colorama import Fore
