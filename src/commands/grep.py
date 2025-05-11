@@ -19,13 +19,8 @@ class Grep(Cmd):
                 except ValueError:
                     pass
 
-        if '-A' in flags and len(args) > 1 and args[0].isdigit():
-            self.after_context = int(args[0])
-            self.pattern = args[1] if len(args) > 1 else None
-            self.files = args[2:] if len(args) > 2 else []
-        else:
-            self.pattern = args[0] if args else None
-            self.files = args[1:] if len(args) > 1 else []
+        self.pattern = args[0] if args else None
+        self.files = args[1:] if len(args) > 1 else []
 
     def run(self):
         if not self.pattern:
@@ -66,7 +61,8 @@ class Grep(Cmd):
         if not self.files and self.stdin:
             result = process_content(self.stdin)
             if self.count_only:
-                return f"{len([x for x in result if not x.startswith('--')])}\n"
+                count = len([x for x in result if not x.startswith('--')])
+                return f"{count}\n"
             elif self.files_with_matches:
                 return ""
             return "\n".join(result) + "\n" if result else ""
