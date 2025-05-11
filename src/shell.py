@@ -1,3 +1,5 @@
+import re
+
 from prompt_toolkit import prompt
 from prompt_toolkit.key_binding import KeyBindings
 from colorama import Fore
@@ -23,17 +25,17 @@ def main():
     while True:
         try:
             user_input = prompt('BABASH> ', key_bindings=kb).strip()
-            if user_input.lower() in ('exit', 'quit'):
-                break
 
-            tokens = lexer.run(user_input)
-            ast = parser.run(tokens)
-            result = interpreter.run(ast)
+            commands = user_input.split(';')
+            for cmd in commands:
+                tokens = lexer.run(cmd)
+                ast = parser.run(tokens)
+                result = interpreter.run(ast)
 
-            if result is None:
-                print(user_input)
-            else:
-                print(result, end="")
+                if result is None:
+                    print(cmd)
+                else:
+                    print(result, end="")
 
         except KeyboardInterrupt:
             break
