@@ -1,0 +1,80 @@
+@startuml
+!theme plain
+
+skinparam component {
+  BackgroundColor White
+  BorderColor #333
+  ArrowColor Navy
+  PortFontColor #000
+  InterfaceFontColor #000
+}
+
+component "Lexer" as Lexer {
+  () "raw_input" as lex_in
+  () "tokens" as lex_out
+}
+
+component "Parser" as Parser {
+  () "tokens" as parse_in
+  () "AST" as parse_out
+}
+
+component "AST" as AST {
+  () "commands" as ast_in
+  () "exec_plan" as ast_out
+}
+
+component "Executor" as Executor {
+  () "plan" as exec_in
+  interface "Command" as exec_iface
+  () "result" as exec_out
+}
+
+component "Commands" as Commands {
+  interface "Command" as cmd_iface
+  [cat]
+  [echo]
+  [wc]
+  [pwd]
+  [exit]
+}
+
+component "System" as System {
+  interface "FileSystem" as fs_iface
+  interface "Process" as proc_iface
+  [File System]
+  [Process Manager]
+}
+
+() "User Input" as user_input
+() "Console Output" as console_output
+
+user_input --> lex_in
+lex_out --> parse_in
+parse_out --> ast_in
+ast_out --> exec_in
+exec_out --> console_output
+
+exec_iface -- cmd_iface
+fs_iface -- [File System]
+proc_iface -- [Process Manager]
+
+[cat] --> fs_iface
+[wc] --> fs_iface
+[pwd] --> fs_iface
+[exit] --> proc_iface
+
+note right of AST
+  <b>AST-input</b>:
+  Дерево разбора команд
+  Пример:
+  Pipe(cat "file.txt", wc)
+end note
+
+note left of Executor
+  <b>Executor</b>:
+  1. Вызывает команды через Command
+  2. Управляет пайплайнами
+  3. Обрабатывает exit
+end note
+@enduml

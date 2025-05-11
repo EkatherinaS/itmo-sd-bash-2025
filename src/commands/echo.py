@@ -10,35 +10,22 @@ string (строка): текст или сообщение, которое не
 -n: отключает завершающую новую строку (командная строка будет отображаться сразу после сообщения)
 -e: позволяет интерпретировать обратные косые черты (например \n \t и т.д.)
 -E: отключает интерпретацию обратных косых черточек (поведение по умолчанию)
-"""
 
-from src.commands.cmd import Cmd
+ФЛАГИ НЕ ПОДДЕРЖИВАЮТСЯ!!!
+"""
+from commands.cmd import Cmd
 
 class Echo(Cmd):
-    def __init__(self, *args, **kwargs):
-        Cmd.__init__(self, *args, **kwargs)
-        self.n = self.options.get('n', False)
-        self.e = self.options.get('e', False)
-        self.E = self.options.get('E', False)
+    def __init__(self, args, flags, options, stdin):
+        super().__init__(args, flags, options, stdin)
+        self.n = '-n' in self.flags
+        self.e = False
+        for flag in self.flags:
+            self.e = ('-e' == flag)
 
     def run(self):
-        output = []
-        for arg in self.args:
-            if self.e and not self.E:
-                for seq, char in self.escape_seq.items():
-                    arg = arg.replace(seq, char)
-            output.append(arg)
-        result = ''.join(output)
-        print(result, end="" if self.n else "\n")
-
-    escape_seq = {
-        '\\a': '\a',  # Alert (bell)
-        '\\b': '\b',  # Backspace
-        '\\e': '\x1b',  # Escape character
-        '\\f': '\f',  # Form feed
-        '\\n': '\n',  # New line
-        '\\r': '\r',  # Carriage return
-        '\\t': '\t',  # Horizontal tab
-        '\\v': '\v',  # Vertical tab
-        '\\\\': '\\', # Backslash
-    }
+        if self.args:
+            joiner = " " if not self.n else "\n"
+            result = joiner.join(self.args)
+            return result + ("" if self.n else "\n")
+        return "\n" if not self.n else ""
