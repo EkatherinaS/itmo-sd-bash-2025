@@ -14,9 +14,9 @@ class Interpreter:
             if self.root.cmd is None:
                 return f"Command not found: {json.dumps(ast, indent=2)}\n"
             #debug prints
-            print("_______AST________")
-            print(f"{json.dumps(ast, indent=2)}")
-            print("_______Command result________")
+            #print("_______AST________")
+            #print(f"{json.dumps(ast, indent=2)}")
+            #print("_______Command result________")
             return self.root.interpret()
 
     def var_decl_interpret(self, data):
