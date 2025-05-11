@@ -26,7 +26,7 @@ class TestCat:
         except FileNotFoundError:
             pytest.skip("config.py not found in project root")
 
-        assert cat_cmd(args=["config.py"]) == expected_content + "\n"
+        assert cat_cmd(args=["config.py"]) == expected_content
 
     def test_multiple_files(self, cat_cmd):
         expected_content = []
@@ -39,7 +39,7 @@ class TestCat:
             except FileNotFoundError:
                 pytest.skip(f"{file} not found in project root")
 
-        expected_output = "\n".join(expected_content) + "\n"
+        expected_output = "\n".join(expected_content)
         assert cat_cmd(args=files_to_test) == expected_output
 
     def test_empty_input(self, cat_cmd):

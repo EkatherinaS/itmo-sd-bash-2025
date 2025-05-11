@@ -3,7 +3,7 @@ from commands.echo import Echo
 from commands.wc import Wc
 from commands.pwd import Pwd
 from commands.exit import Exit
-# from .grep import Grep
+from .grep import Grep
 
 
 class CmdFactory:
@@ -15,7 +15,7 @@ class CmdFactory:
             "wc": Wc,
             "pwd": Pwd,
             "exit": Exit,
-            # "grep": Grep
+            "grep": Grep
         }
 
     def get(self, cmd_name):
