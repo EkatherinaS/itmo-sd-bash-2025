@@ -3,7 +3,7 @@ from commands.echo import Echo
 from commands.wc import Wc
 from commands.pwd import Pwd
 from commands.exit import Exit
-from .grep import Grep
+from commands.grep import Grep
 
 
 class CmdFactory:
