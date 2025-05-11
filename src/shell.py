@@ -23,8 +23,6 @@ def main():
     while True:
         try:
             user_input = prompt('BABASH> ', key_bindings=kb).strip()
-            if user_input.lower() in ('exit', 'quit'):
-                break
 
             tokens = lexer.run(user_input)
             ast = parser.run(tokens)

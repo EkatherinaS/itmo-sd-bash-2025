@@ -24,10 +24,8 @@ class Echo(Cmd):
             self.e = ('-e' == flag)
 
     def run(self):
-        result = ""
         if self.args:
             joiner = " " if not self.n else "\n"
             result = joiner.join(self.args)
-        if self.stdin:
-            result = self.stdin
-        return result + ("" if self.n else "\n")
+            return result + ("" if self.n else "\n")
+        return "\n" if not self.n else ""
