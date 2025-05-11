@@ -9,7 +9,7 @@ class Lexer:
         self.token_patterns = [
             ('PIPE', r'\|'),                    # Шаблон для |
             ('FLAGS', r'-[^- \'"=]+'),          # Шаблон для флагов
-            ('OPTIONS', r'--[^- \'"=]+'),       # Шаблон для опций
+            ('OPTIONS', r'--[^ ]+'),       # Шаблон для опций
             ('WHITESPACE', r'\s+'),             # Игнорируем пробелы
             # Объявление var=value
             ('VAR_DECL', r'\b[a-zA-Z_][a-zA-Z0-9_]*=(?:\'[^\']*\'|"[^"]*"|[^\s;"\']+)')
@@ -54,6 +54,8 @@ class Lexer:
         cur_val = ""
         for s in value:
             if (s == "\'" or s == "\"") and cur_quot == "":
+                if cur_val != "": result += cur_val
+                cur_val = ""
                 cur_quot = s
             elif s == "\'" and cur_quot == "\'":
                 if cur_val != "": result += cur_val
