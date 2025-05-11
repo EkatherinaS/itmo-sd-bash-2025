@@ -24,18 +24,22 @@ class Lexer:
     def run(self, input_str):
         tokens = []
         pos = 0
-        input_val = self.format_quotes(input_str)
+        input_str = self.format_quotes(input_str)
+        input_str = self.format_backslashes(input_str)
 
-        while pos < len(input_val):
-            match = self.token_re.match(input_val, pos)
+        while pos < len(input_str):
+            match = self.token_re.match(input_str, pos)
             if not match:
-                raise SyntaxError(f"Unexpected character: {input_val[pos]}")
+                raise SyntaxError(f"Unexpected character: {input_str[pos]}")
             name = match.lastgroup
             value = match.group(name)
             if name != 'WHITESPACE':
                 tokens.append(Token(name, value))
             pos = match.end()
         return tokens
+
+    def format_backslashes(self, value):
+        return re.sub(r'\\+', lambda m: '\\' * ((len(m.group())) // 2), value)
 
     def vars_replacer(self, match):
         var_name = match.group(2) if match.group(2) is not None else match.group(3)
