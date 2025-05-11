@@ -6,10 +6,6 @@ from variables import Variables
 
 class Lexer:
     def __init__(self, cmds):
-        self.quoting_patterns = [
-            ('SINGLE_QUOTING', r'\'([^\']+)\''),  # Одинарные кавычки
-            ('DOUBLE_QUOTING', r'\"([^\"]+)\"'),  # Двойные кавычки
-        ]
         self.token_patterns = [
             ('PIPE', r'\|'),                    # Шаблон для |
             ('FLAGS', r'-[^- \'"=]+'),          # Шаблон для флагов
@@ -23,7 +19,6 @@ class Lexer:
         self.token_patterns.append(('ARGUMENT', r'[^ ]+'))   # Шаблон для аргументов
 
         self.vars_re = re.compile(r'(\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}|\$([a-zA-Z_][a-zA-Z0-9_]*))')
-        self.quoting_re = re.compile('|'.join(f'(?P<{name}>{pattern})' for name, pattern in self.quoting_patterns))
         self.token_re = re.compile('|'.join(f'(?P<{name}>{pattern})' for name, pattern in self.token_patterns))
 
     def run(self, input_str):
