@@ -1,11 +1,64 @@
 @startuml
-'https://plantuml.com/sequence-diagram
+skinparam NoteBackgroundColor transparent
+skinparam NoteBorderColor transparent
+skinparam sequenceMessageAlignment center
 
-autonumber
+title input
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+actor Пользователь
+participant "Система: Bash" as Bash
+participant ":Lexer" as Lexer
+participant ":Parser" as Parser
+participant ":Interpreter" as Interpreter
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+'== Ввод команды ==
+Пользователь -> Bash : команда (строка)
+activate Bash
+
+'== Лексический анализ ==
+Bash -> Lexer : команда (строка)
+activate Lexer
+Lexer --> Bash : последовательность токенов
+deactivate Lexer
+
+'== Синтаксический анализ ==
+Bash -> Parser : последовательность токенов
+activate Parser
+Parser --> Bash : AST
+deactivate Parser
+
+'== Интерпретация ==
+Bash -> Interpreter : выполнить AST
+activate Interpreter
+
+Interpreter -> Interpreter : получить аргументы первого узла
+activate Interpreter
+note right of Interpreter : args
+Interpreter -[hidden]-> Interpreter :
+deactivate Interpreter
+
+loop <back:White>дочерние узлы не закончились</back>
+    Parser -[hidden]-> Interpreter :
+    alt <back:White>текущий узел - команда</back>
+        Parser -[hidden]-> Interpreter :
+        Interpreter -> Interpreter : выполнить команду(args)
+        activate Interpreter
+        note right of Interpreter : результат команды
+        Interpreter -[hidden]-> Interpreter :
+        deactivate Interpreter
+    else <back:White>текущий узел - пайп</back>
+        Interpreter -> Interpreter : записать результат команды в args
+        activate Interpreter
+        note right of Interpreter : args
+        Interpreter -[hidden]-> Interpreter :
+        deactivate Interpreter
+    end
+end
+
+'== Вывод результата ==
+Interpreter --> Bash : результат команды
+deactivate Interpreter
+Bash --> Пользователь : результат команды
+deactivate Bash
+
 @enduml
