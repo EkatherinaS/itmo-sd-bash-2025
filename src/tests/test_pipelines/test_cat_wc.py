@@ -1,5 +1,4 @@
 import pytest
-import os
 from commands.cat import Cat
 from commands.wc import Wc
 

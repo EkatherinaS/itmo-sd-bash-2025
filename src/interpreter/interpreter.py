@@ -1,7 +1,6 @@
 from interpreter.expression import Expression
 from variables import Variables
 import json
-import subprocess
 
 class Interpreter:
     def __init__(self):
