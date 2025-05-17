@@ -1,1 +1,1 @@
-cmds = ["cat", "echo", "wc", "pwd", "exit", "grep"]
+cmds = ["cat", "echo", "wc", "pwd", "exit", "grep", "ls"]
