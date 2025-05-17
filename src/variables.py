@@ -1,5 +1,3 @@
-import re
-
 def singleton(class_):
     instances = {}
 
