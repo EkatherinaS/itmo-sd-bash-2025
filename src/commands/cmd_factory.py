@@ -19,5 +19,6 @@ class CmdFactory:
         }
 
     def get(self, cmd_name):
-        if cmd_name is None: cmd_name = "echo"
+        if cmd_name is None:
+            return None
         return self.commands[cmd_name]
