@@ -5,6 +5,7 @@ from commands.pwd import Pwd
 from commands.exit import Exit
 from commands.grep import Grep
 from commands.ls import Ls
+from commands.cd import Cd
 
 
 class CmdFactory:
@@ -17,7 +18,8 @@ class CmdFactory:
             "pwd": Pwd,
             "exit": Exit,
             "grep": Grep,
-            "ls": Ls
+            "ls": Ls,
+            "cd": Cd
         }
 
     def get(self, cmd_name):
