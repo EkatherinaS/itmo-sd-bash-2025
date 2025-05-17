@@ -13,5 +13,7 @@ class Cd(Cmd):
                 os.chdir(to_dir)
             except (FileNotFoundError, NotADirectoryError):
                 return f"cd: {to_dir}: No such directory\n"
-        cur_dir = os.path.abspath(os.curdir)
-        return cur_dir + '\n'
+            cur_dir = os.path.abspath(os.curdir)
+            return cur_dir + '\n'
+        else:
+            return f"cd: There are too many arguments\n"
