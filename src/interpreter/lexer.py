@@ -25,7 +25,6 @@ class Lexer:
         tokens = []
         pos = 0
         input_str = self.format_quotes(input_str)
-        print(input_str)
         input_str = self.format_backslashes(input_str)
 
         while pos < len(input_str):
