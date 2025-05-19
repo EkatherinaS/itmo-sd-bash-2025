@@ -54,20 +54,26 @@ class Lexer:
         cur_val = ""
         for s in value:
             if (s == "\'" or s == "\"") and cur_quot == "":
-                if cur_val != "": result += cur_val
+                if cur_val != "":
+                    cur_val = self.vars_re.sub(self.vars_replacer, cur_val)
+                    result += cur_val
                 cur_val = ""
                 cur_quot = s
             elif s == "\'" and cur_quot == "\'":
-                if cur_val != "": result += cur_val
+                if cur_val != "":
+                    result += cur_val
                 cur_quot = ""
                 cur_val = ""
             elif s == "\"" and cur_quot == "\"":
-                cur_val = self.vars_re.sub(self.vars_replacer, cur_val)
-                if cur_val != "": result += cur_val
+                if cur_val != "":
+                    cur_val = self.vars_re.sub(self.vars_replacer, cur_val)
+                    result += cur_val
                 cur_quot = ""
                 cur_val = ""
             else:
                 cur_val += s
         if cur_quot != "":
             cur_val = cur_quot + cur_val
+        if cur_val != "":
+            cur_val = self.vars_re.sub(self.vars_replacer, cur_val)
         return result + cur_val
