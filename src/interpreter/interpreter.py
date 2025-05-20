@@ -18,9 +18,7 @@ class Interpreter:
             print("_______Command result________")
 
             if self.root.cmd is None:
-                args = ast.get("ARGS", [])
-                if args:
-                    return None
+                return None
             return self.root.interpret()
 
     def var_decl_interpret(self, data):

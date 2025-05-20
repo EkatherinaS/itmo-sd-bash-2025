@@ -4,6 +4,7 @@ from interpreter.bash_token import Token
 from variables import Variables
 
 
+
 class Lexer:
     def __init__(self, cmds):
         self.token_patterns = [
@@ -50,30 +51,29 @@ class Lexer:
     # "" / '' - раскрываются лениво -> """""ex" будет раскрыто как "" "" "ex"
     def format_quotes(self, value):
         result = ""
-        cur_quot = ""
         cur_val = ""
+        quotes = []
         for s in value:
-            if (s == "\'" or s == "\"") and cur_quot == "":
-                if cur_val != "":
-                    cur_val = self.vars_re.sub(self.vars_replacer, cur_val)
-                    result += cur_val
-                cur_val = ""
-                cur_quot = s
-            elif s == "\'" and cur_quot == "\'":
-                if cur_val != "":
-                    result += cur_val
-                cur_quot = ""
-                cur_val = ""
-            elif s == "\"" and cur_quot == "\"":
-                if cur_val != "":
-                    cur_val = self.vars_re.sub(self.vars_replacer, cur_val)
-                    result += cur_val
-                cur_quot = ""
-                cur_val = ""
-            else:
+            if s != "\'" and s != "\"":
                 cur_val += s
-        if cur_quot != "":
-            cur_val = cur_quot + cur_val
+            elif s == "\'" and "\'" in quotes:
+                result += cur_val
+                cur_val = ""
+                while quotes[-1] != "\'":
+                    quotes.pop()
+                quotes.pop()
+            elif s == "\"" and "\"" in quotes:
+                result += self.vars_re.sub(self.vars_replacer, cur_val)
+                cur_val = ""
+                while quotes[-1] != "\"":
+                    quotes.pop()
+                quotes.pop()
+            else:
+                result += self.vars_re.sub(self.vars_replacer, cur_val)
+                cur_val = ""
+                quotes.append(s)
+        if len(quotes) > 0:
+            return ""
         if cur_val != "":
             cur_val = self.vars_re.sub(self.vars_replacer, cur_val)
         return result + cur_val
