@@ -52,28 +52,31 @@ class Lexer:
     def format_quotes(self, value):
         result = ""
         cur_val = ""
-        quotes = []
+        unclosed_quote = ""
         for s in value:
+            # Не кавычки в принципе -> добавляем в значение
             if s != "\'" and s != "\"":
                 cur_val += s
-            elif s == "\'" and "\'" in quotes:
+            # Точно кавычка, но не совпадает с крайней -> добавляем в значение
+            elif unclosed_quote == "":
+                unclosed_quote = s
+            # Точно кавычка, но крайней еще нет -> добавляем как открывающую
+            elif s != unclosed_quote:
+                cur_val += s
+            # Одинарная кавычка -> не меняем переменные
+            elif s == "\'":
                 result += cur_val
                 cur_val = ""
-                while quotes[-1] != "\'":
-                    quotes.pop()
-                quotes.pop()
-            elif s == "\"" and "\"" in quotes:
+                unclosed_quote = ""
+            # Двойная кавычка -> меняем переменные
+            elif s == "\"":
                 result += self.vars_re.sub(self.vars_replacer, cur_val)
                 cur_val = ""
-                while quotes[-1] != "\"":
-                    quotes.pop()
-                quotes.pop()
-            else:
-                result += self.vars_re.sub(self.vars_replacer, cur_val)
-                cur_val = ""
-                quotes.append(s)
-        if len(quotes) > 0:
+                unclosed_quote = ""
+        # Есть незакрытая кавычка -> ошибка
+        if unclosed_quote != "":
             return ""
+        # Есть значение без кавычек в конце -> надо заменить переменные
         if cur_val != "":
             cur_val = self.vars_re.sub(self.vars_replacer, cur_val)
         return result + cur_val

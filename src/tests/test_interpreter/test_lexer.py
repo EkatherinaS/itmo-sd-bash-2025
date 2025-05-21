@@ -70,13 +70,35 @@ class TestLexer:
         result = lexer.format_quotes('echo "hello" \'world\'')
         assert result == "echo hello world"
 
-    def test_unclosed_quotes(self, lexer):
-        result = lexer.format_quotes('echo "hello')
-        assert result == 'echo "hello'
-
     def test_nested_quotes(self, lexer):
         result = lexer.format_quotes('echo "\'hello\'"')
         assert result == "echo 'hello'"
+
+    def test_smoke_quotes(self, lexer):
+        result = lexer.format_quotes('echo \"\'name\'\"')
+        assert result == "echo \'name\'"
+        result = lexer.format_quotes('echo \"\'name\"')
+        assert result == "echo \'name"
+        result = lexer.format_quotes('echo \'\"name\"\'')
+        assert result == "echo \"name\""
+        result = lexer.format_quotes('echo \'name\"\'')
+        assert result == "echo name\""
+        result = lexer.format_quotes('echo \"\"\"\"\"\"\"\"\"\"\"\"name\"\"')
+        assert result == "echo name"
+        result = lexer.format_quotes('echo \"\"\"\"\"\"\"\'\'\'\'\"name\"\"')
+        assert result == "echo \'\'\'\'name"
+        result = lexer.format_quotes('echo \'\'\'\'\'\"\"\'name\"\"')
+        assert result == "echo \"\"name"
+
+        result = lexer.format_quotes('echo \'\"$name\"\'')
+        assert result == "echo \"$name\""
+        result = lexer.format_quotes('echo \'$name\"\'')
+        assert result == "echo $name\""
+
+        result = lexer.format_quotes('echo \"\'\"\'\"')
+        assert result == ""
+        result = lexer.format_quotes('echo \'\"\'\"\'')
+        assert result == ""
 
     def test_empty_input(self, lexer):
         tokens = lexer.run("")
