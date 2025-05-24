@@ -4,6 +4,7 @@ from interpreter.bash_token import Token
 from variables import Variables
 
 
+
 class Lexer:
     def __init__(self, cmds):
         self.token_patterns = [
@@ -50,30 +51,32 @@ class Lexer:
     # "" / '' - раскрываются лениво -> """""ex" будет раскрыто как "" "" "ex"
     def format_quotes(self, value):
         result = ""
-        cur_quot = ""
         cur_val = ""
+        unclosed_quote = ""
         for s in value:
-            if (s == "\'" or s == "\"") and cur_quot == "":
-                if cur_val != "":
-                    cur_val = self.vars_re.sub(self.vars_replacer, cur_val)
-                    result += cur_val
-                cur_val = ""
-                cur_quot = s
-            elif s == "\'" and cur_quot == "\'":
-                if cur_val != "":
-                    result += cur_val
-                cur_quot = ""
-                cur_val = ""
-            elif s == "\"" and cur_quot == "\"":
-                if cur_val != "":
-                    cur_val = self.vars_re.sub(self.vars_replacer, cur_val)
-                    result += cur_val
-                cur_quot = ""
-                cur_val = ""
-            else:
+            # Не кавычки в принципе -> добавляем в значение
+            if s != "\'" and s != "\"":
                 cur_val += s
-        if cur_quot != "":
-            cur_val = cur_quot + cur_val
+            # Точно кавычка, но не совпадает с крайней -> добавляем в значение
+            elif unclosed_quote == "":
+                unclosed_quote = s
+            # Точно кавычка, но крайней еще нет -> добавляем как открывающую
+            elif s != unclosed_quote:
+                cur_val += s
+            # Одинарная кавычка -> не меняем переменные
+            elif s == "\'":
+                result += cur_val
+                cur_val = ""
+                unclosed_quote = ""
+            # Двойная кавычка -> меняем переменные
+            elif s == "\"":
+                result += self.vars_re.sub(self.vars_replacer, cur_val)
+                cur_val = ""
+                unclosed_quote = ""
+        # Есть незакрытая кавычка -> ошибка
+        if unclosed_quote != "":
+            return ""
+        # Есть значение без кавычек в конце -> надо заменить переменные
         if cur_val != "":
             cur_val = self.vars_re.sub(self.vars_replacer, cur_val)
         return result + cur_val
