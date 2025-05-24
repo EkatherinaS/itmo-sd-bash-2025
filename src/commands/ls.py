@@ -17,6 +17,9 @@ class Ls(Cmd):
             )
         
         for item in os.listdir(dir):
+            if item.startswith('.'):
+               continue 
+            
             item_path = os.path.join(dir, item)
             stat = os.stat(item_path)
             
