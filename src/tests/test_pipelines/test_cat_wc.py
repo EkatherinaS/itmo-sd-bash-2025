@@ -39,9 +39,7 @@ class TestCatWcInteraction:
         words = len(config_content.split())
         chars = len(config_content)
 
-        if config_content.endswith('\n'):
-            lines -= 1
-        else:
+        if not config_content.endswith('\n'):
             chars += 1
 
         expected = f"{lines:7} {words:7} {chars:7}\n"
