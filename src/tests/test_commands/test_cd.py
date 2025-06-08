@@ -1,6 +1,6 @@
 import pytest
 import os
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from commands.cd import Cd
 
 class TestCd:
@@ -46,11 +46,31 @@ class TestCd:
         result = cd_cmd([to_dir])
         
         mock_chdir.assert_called_once_with(to_dir)
-        assert result == f"cd: {to_dir}: No such directory\n"
+        assert result == f"cd: {to_dir}: Not a directory\n"
 
-    def test_cd_no_args(self, cd_cmd):
+    @patch('os.chdir')
+    def test_cd_permission_denied(self, mock_chdir, cd_cmd):
+        mock_chdir.side_effect = PermissionError(13, "Permission denied")
+        to_dir = "/restricted"
+        
+        result = cd_cmd([to_dir])
+        
+        mock_chdir.assert_called_once_with(to_dir)
+        assert result == f"cd: {to_dir}: Permission denied\n"
+
+    @patch('os.chdir')
+    @patch('os.path.expanduser')
+    @patch('os.path.abspath')
+    def test_cd_no_args(self, mock_abspath, mock_expanduser, mock_chdir, cd_cmd):
+        mock_expanduser.return_value = "/home/user"
+        mock_abspath.return_value = "/home/user"
+        
         result = cd_cmd([])
-        assert result == "cd: There are too many arguments\n"
+        
+        mock_expanduser.assert_called_once_with("~")
+        mock_chdir.assert_called_once_with("/home/user")
+        mock_abspath.assert_called_once_with(os.curdir)
+        assert result == "/home/user\n"
 
     def test_cd_too_many_args(self, cd_cmd):
         result = cd_cmd(["dir1", "dir2"])
@@ -58,13 +78,36 @@ class TestCd:
 
     @patch('os.chdir')
     @patch('os.path.abspath')
-    def test_cd_home_dir(self, mock_abspath, mock_chdir, cd_cmd):
+    def test_cd_relative_path(self, mock_abspath, mock_chdir, cd_cmd):
+        test_dir = "/current/dir/subdir"
+        mock_abspath.return_value = test_dir
+        
+        result = cd_cmd(["subdir"])
+        
+        mock_chdir.assert_called_once_with("subdir")
+        mock_abspath.assert_called_once_with(os.curdir)
+        assert result == f"{test_dir}\n"
+
+    @patch('os.chdir')
+    @patch('os.path.abspath')
+    def test_cd_special_chars_in_path(self, mock_abspath, mock_chdir, cd_cmd):
+        test_dir = "/path/with spaces and $pec!al chars"
+        mock_abspath.return_value = test_dir
+        
+        result = cd_cmd(["path with spaces and $pec!al chars"])
+        
+        mock_chdir.assert_called_once_with("path with spaces and $pec!al chars")
+        mock_abspath.assert_called_once_with(os.curdir)
+        assert result == f"{test_dir}\n"
+
+    @patch('os.chdir')
+    @patch('os.path.abspath')
+    def test_cd_empty_string(self, mock_abspath, mock_chdir, cd_cmd):
         test_dir = "/home/user"
         mock_abspath.return_value = test_dir
         
-        # Тестируем с тильдой (предполагая, что она должна раскрываться в домашнюю директорию)
-        result = cd_cmd(["~"])
+        result = cd_cmd([""])
         
-        mock_chdir.assert_called_once_with("~")
+        mock_chdir.assert_called_once_with("")
         mock_abspath.assert_called_once_with(os.curdir)
         assert result == f"{test_dir}\n"
