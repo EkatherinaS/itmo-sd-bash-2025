@@ -36,7 +36,9 @@ eighth line"""
             result = grep.run()
             assert test_file in result
             assert f2.name in result
-            assert result.count('\n') == 4
+            assert "second line with pattern" in result
+            assert "another pattern" in result
+            assert "--" in result
             os.unlink(f2.name)
 
     def test_grep_count(self, test_file):
