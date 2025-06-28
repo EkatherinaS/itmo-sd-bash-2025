@@ -12,12 +12,26 @@ class Grep(Cmd):
         self.word_regexp = '-w' in flags
         self.after_context = 0
 
+        for flag in flags:
+            if flag.startswith('-A'):
+                try:
+                    self.after_context = int(flag[2:])
+                except ValueError:
+                    pass
+
         for opt in options:
             if opt.startswith('-A'):
                 try:
                     self.after_context = int(opt[2:])
                 except ValueError:
                     pass
+
+        if '-A' in flags and self.after_context == 0 and args:
+            try:
+                self.after_context = int(args[0])
+                args = args[1:]
+            except (ValueError, IndexError):
+                pass
 
         self.pattern = args[0] if args else None
         self.files = args[1:] if len(args) > 1 else []
@@ -39,22 +53,22 @@ class Grep(Cmd):
 
         matches = []
 
-        def process_content(content, filename=None):
+        def process_content(content, filename=None, show_filename=False):
             lines = content.split('\n')
             result = []
-            last_match_pos = -self.after_context - 2
+            last_printed_line = -1
 
             for i, line in enumerate(lines):
                 if compiled_pattern.search(line):
-                    if i - last_match_pos > self.after_context + 1 and result:
+                    if result and i > last_printed_line + 1:
                         result.append("--")
 
-                    result.append(f"{filename}:{line}" if filename else line)
+                    result.append(f"{filename}:{line}" if filename and show_filename else line)
+                    last_printed_line = i
 
                     for j in range(i + 1, min(i + 1 + self.after_context, len(lines))):
-                        result.append(f"{filename}:{lines[j]}" if filename else lines[j])
-
-                    last_match_pos = i
+                        result.append(f"{filename}-{lines[j]}" if filename and show_filename else f"-{lines[j]}")
+                        last_printed_line = j
 
             return result
 
@@ -67,11 +81,13 @@ class Grep(Cmd):
                 return ""
             return "\n".join(result) + "\n" if result else ""
 
-        for file in self.files:
+        show_filename = len(self.files) > 1
+
+        for i, file in enumerate(self.files):
             try:
                 with open(file, 'r') as f:
                     content = f.read()
-                    result = process_content(content, file)
+                    result = process_content(content, file, show_filename)
 
                     if self.files_with_matches:
                         if any(not line.startswith('--') for line in result):
@@ -80,6 +96,8 @@ class Grep(Cmd):
                         count = len([x for x in result if not x.startswith('--')])
                         matches.append(f"{file}:{count}")
                     else:
+                        if i > 0 and result:
+                            matches.append("--")
                         matches.extend(result)
             except FileNotFoundError:
                 matches.append(f"grep: {file}: No such file or directory")
