@@ -31,12 +31,15 @@ class Grep(Cmd):
                 self.after_context = int(args[0])
                 args = args[1:]
             except (ValueError, IndexError):
-                pass
+                self.invalid_argument = True
 
         self.pattern = args[0] if args else None
         self.files = args[1:] if len(args) > 1 else []
 
     def run(self):
+        if hasattr(self, 'invalid_argument') and self.invalid_argument:
+            return "grep: Invalid argument\n"
+
         if not self.pattern:
             return "grep: missing pattern\n"
 
